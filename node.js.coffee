@@ -5,7 +5,7 @@ https = require 'https'
 
 port = 8080
 
-server = http.createServer (request, response) =>
+server = http.createServer (request, response) ->
 	console.log 'hit: ' + request.url
 	if not overrideInput(request.url, response)
 		https.get(HOST + request.url, (res) =>
@@ -27,7 +27,7 @@ server.listen port
 console.log "Server running at http://127.0.0.1:#{port}/"
 
 
-overrideInput = (url, response) =>
+overrideInput = (url, response) ->
 	if url.indexOf('/users/me/news') != -1
 		response.end JSON.stringify(news)
 		return true
