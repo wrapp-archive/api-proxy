@@ -28,7 +28,7 @@ func main() {
 }
 
 func defaultHandler(w http.ResponseWriter, r *http.Request) {
-	file := strings.Split(strings.Replace(strings.Replace(r.URL.String(), "/", ".", -1), ".", "", 1), "?")[0] + ".txt" //Changes '/' to '.', remove the first '.', and remove everything after and including '?'
+	file := strings.Split(strings.Replace(strings.Replace(r.URL.String(), "/", ".", -1), ".", "", 1), "?")[0] + ".json" //Changes '/' to '.', remove the first '.', and remove everything after and including '?'
 	if fileExists(OVERRIDE + file) {
 		fmt.Println("overriding: " + r.URL.String())
 		writeFileToOut(w, OVERRIDE+file)
