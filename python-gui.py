@@ -11,24 +11,24 @@ class Example(QtGui.QWidget):
         super(Example, self).__init__()
         self.initUI()
         self.bind_views()
-
-        self.reloadFiles() 
-        self.setWindowTitle('Api-proxy GUI')    
+        self.reload_files()
+        self.setWindowTitle('Api-proxy GUI')
         self.show()
 
     def bind_views(self):
         self.override_checkbox.stateChanged.connect(self.override_checked)
         self.qlist.itemSelectionChanged.connect(self.item_click)
         self.reload_text_button.clicked.connect(self.item_click)
-        self.reload_button.clicked.connect(self.reloadFiles)
+        self.reload_button.clicked.connect(self.reload_files)
         self.save_button.clicked.connect(self.save_text_to_file)
 
-    def reloadFiles(self):
-        self.qlist.clear()
-        files = [f for f in list(set(listdir("output")+listdir("override"))) if isfile(join("output",f)) or isfile(join("override",f))] #combined both folders and list all uniqe
+    def _get_files_in_directory(self, directory):
+        return [f for f in listdir(directory) if isfile(join(directory, f))]
 
-        for f in files:
-            self.qlist.addItem(f)
+    def reload_files(self):
+        self.qlist.clear()
+        files = sum([self._get_files_in_directory(d) for d in ["output", "override"]], [])
+        map(self.qlist.addItem, files)
 
     def override_checked(self):
         if len(self.qlist.selectedItems()) == 1:
@@ -43,7 +43,7 @@ class Example(QtGui.QWidget):
 
             self.save_button.setEnabled(self.override_checkbox.isChecked())
 
-    def save_text_to_file():
+    def save_text_to_file(self):
             item = self.qlist.selectedItems()[0]
             path = "override/" + item.text()
             text_file = open(path, "w")
@@ -61,10 +61,9 @@ class Example(QtGui.QWidget):
                     content = f.read()
                     self.textbox.setText(content)
                 self.override_checkbox.setChecked(isfile("override/" + item.text()))
-      
+
     def initUI(self):
         QtGui.QToolTip.setFont(QtGui.QFont('SansSerif', 10))
-        
         self.qlist = QtGui.QListWidget()
         self.qlist.setWindowTitle('Example List')
         self.qlist.setMinimumSize(100, 600)
@@ -100,16 +99,14 @@ class Example(QtGui.QWidget):
         hbox = QtGui.QHBoxLayout()
         hbox.addLayout(listVbox)
         hbox.addLayout(textboxVbox)
-        
         self.setLayout(hbox)
 
+
 def main():
-    
     app = QtGui.QApplication(sys.argv)
     ex = Example()
     sys.exit(app.exec_())
 
 
 if __name__ == '__main__':
-
     main()
